@@ -3,3 +3,4 @@ library auth_api;
 
 export 'src/auth_api.dart';
 export 'src/models/models.dart';
+export 'src/user_api.dart';

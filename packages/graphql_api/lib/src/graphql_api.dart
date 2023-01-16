@@ -3,7 +3,11 @@ import 'dart:developer';
 import 'package:graphql/client.dart';
 
 /// {@template graphql_api}
-/// A Very Good Project created by Very Good CLI.
+/// [GraphQLClient] wrapper that exposes simplified methods for executing
+/// queries and mutations.
+///
+/// This class also handles authentication by adding the `Authorization` header,
+/// if needed.
 /// {@endtemplate}
 class GraphqlApi {
   /// {@macro graphql_api}

@@ -1,120 +1,90 @@
+import 'dart:async';
+
 import 'package:auth_api/auth_api.dart';
 import 'package:graphql_api/graphql_api.dart';
-
-/// {@template auth_repository.login_params}
-/// Parameters for the login mutation.
-/// {@endtemplate}
-class LoginParams extends QueryParams<String> {
-  /// {@macro auth_repository.login_params}
-  LoginParams({
-    required this.username,
-    required this.password,
-  });
-
-  final String username;
-  final String password;
-
-  @override
-  Map<String, dynamic> toMap() {
-    return {
-      'username': username,
-      'password': password,
-    };
-  }
-
-  @override
-  String builder(Map<String, dynamic> data) {
-    return data['login'] as String;
-  }
-}
-
-/// {@template auth_repository.sign_up_params}
-/// Parameters for the signup mutation.
-/// {@endtemplate}
-class SignUpParams extends QueryParams<String> {
-  /// {@macro auth_repository.sign_up_params}
-  SignUpParams({
-    required this.username,
-    required this.password,
-  });
-
-  final String username;
-  final String password;
-
-  @override
-  Map<String, dynamic> toMap() {
-    return {
-      'username': username,
-      'password': password,
-    };
-  }
-
-  @override
-  String builder(Map<String, dynamic> data) {
-    return data['signup'] as String;
-  }
-}
+import 'package:rxdart/rxdart.dart';
 
 class AuthRepository {
-  const AuthRepository({
+  AuthRepository({
     required AuthApi authApi,
   }) : _authApi = authApi;
 
   final AuthApi _authApi;
 
+  late final StreamController<String?> _tokenController =
+      BehaviorSubject<String?>(
+    // When the stream is first listened to, it will sink any stored token.
+    onListen: () async =>
+        _tokenController.sink.add(await _authApi.currentUser()),
+  );
+
+  /// Stream of [String] which will emit the current token when it changes.
+  Stream<String?> tokenStream() => _tokenController.stream;
+
+  /// Sinks the given [token] into the [_tokenController] and emitted to the
+  /// [tokenStream].
+  void Function(String?) _sinkToken(String? token) => _tokenController.sink.add;
+
   /// Logs in user and returns a [Future] that resolves to a [String] containing
   /// the token.
   ///
   /// If the login fails, it throws an [AuthException]. If the query fails,
-  /// it throws am [OperationException].
+  /// it throws an [OperationException].
   Future<String> login({
     required String email,
     required String password,
+    String? fcmToken,
   }) async {
     try {
       final token = await _authApi.login(
-        params: LoginParams(username: email, password: password),
-        query: _loginQuery,
+        username: email,
+        password: password,
+        fcmToken: fcmToken,
       );
+
+      _sinkToken(token);
+
       return token;
     } catch (e) {
       rethrow;
     }
   }
-
-  static const _loginQuery = r'''
-    mutation Login($username: String!, $password: String!) {
-      login(username: $username, password: $password)
-    }
-  ''';
 
   /// Signs up user and returns a [Future] that resolves to a [String]
   /// containing the token.
   ///
   /// If the sign up fails, it throws an [AuthException]. If the query fails,
-  /// it throws am [OperationException].
+  /// it throws an [OperationException].
   Future<String> signUp({
     required String email,
     required String password,
+    String? fcmToken,
   }) async {
     try {
       final token = await _authApi.signUp(
-        params: SignUpParams(username: email, password: password),
-        query: _signUpQuery,
+        email: email,
+        password: password,
+        fcmToken: fcmToken,
       );
+
+      _sinkToken(token);
+
       return token;
     } catch (e) {
       rethrow;
     }
   }
 
-  static const _signUpQuery = r'''
-    mutation SignUp($username: String!, $password: String!) {
-      signup(username: $username, password: $password)
-    }
-  ''';
+  /// Signs out from the app. If an [fcmToken] is provided, it will be removed
+  /// from the user's account to stop notifications from being sent to this
+  /// device.
+  Future<void> signOut([String? fcmToken]) async {
+    try {
+      await _authApi.signOut(fcmToken);
 
-  /// Returns the current user token. If the token is not found, returns
-  /// `null`.
-  Future<String?> currentUser() async => _authApi.currentUser();
+      _sinkToken(null);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
