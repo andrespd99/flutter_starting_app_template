@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:auth_api/auth_api.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:graphql_base_example/repositories/auth_repository.dart';
-import 'package:graphql_base_example/repositories/push_notifications_repository.dart';
-import 'package:graphql_base_example/repositories/user_repository.dart';
+import 'package:flutter_starting_app/repositories/auth_repository.dart';
+import 'package:flutter_starting_app/repositories/push_notifications_repository.dart';
+import 'package:flutter_starting_app/repositories/user_repository.dart';
 
 part 'user_event.dart';
 part 'user_state.dart';

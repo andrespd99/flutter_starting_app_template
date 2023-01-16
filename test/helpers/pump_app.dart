@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_starting_app/l10n/l10n.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:graphql_base_example/l10n/l10n.dart';
 
 extension PumpApp on WidgetTester {
   Future<void> pumpApp(Widget widget) {

@@ -1,10 +1,10 @@
 import 'package:auth_api/auth_api.dart';
 import 'package:flutter/material.dart';
-import 'package:graphql_base_example/l10n/l10n.dart';
-import 'package:graphql_base_example/repositories/auth_repository.dart';
-import 'package:graphql_base_example/repositories/push_notifications_repository.dart';
-import 'package:graphql_base_example/repositories/user_repository.dart';
-import 'package:graphql_base_example/user/user.dart';
+import 'package:flutter_starting_app/l10n/l10n.dart';
+import 'package:flutter_starting_app/repositories/auth_repository.dart';
+import 'package:flutter_starting_app/repositories/push_notifications_repository.dart';
+import 'package:flutter_starting_app/repositories/user_repository.dart';
+import 'package:flutter_starting_app/user/user.dart';
 
 class App extends StatelessWidget {
   const App({
