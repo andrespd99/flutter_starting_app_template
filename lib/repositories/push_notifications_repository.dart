@@ -13,29 +13,43 @@ const channel = AndroidNotificationChannel(
   importance: Importance.max,
 );
 
+/// A class that manages push notifications for the application. This class
+/// handles [FirebaseMessaging] and [FlutterLocalNotificationsPlugin] setup.
+///
+/// [PushNotificationRepository.initialize()] should be called before
+/// instantiating this class.
 class PushNotificationRepository {
-  static FirebaseMessaging messaging = FirebaseMessaging.instance;
-
   static final _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  static final StreamController<String> _messageStream =
-      StreamController.broadcast();
-
-  static Stream<String> get messagesStream => _messageStream.stream;
-
-  /// Returns the FCM token.
+  /// Returns the Firebase Cloud Messaging token associated to this device.
   Future<String?> getToken() async => FirebaseMessaging.instance.getToken();
 
-  /// Initialized [Firebase] service. This method must be called before
-  /// using any other method to ensure that the service is initialized.
-  static Future<void> initializeApp() async {
+  /// Overrides the default [FirebaseMessaging.onBackgroundMessage],
+  /// [FirebaseMessaging.onMessage], and [FirebaseMessaging.onMessageOpenedApp]
+  /// methods.
+  ///
+  /// On Android, creates a high importance channel.
+  ///
+  /// If `shouldRequestPermission` is `true`, this method requests
+  /// permission to receive push notifications. Otherwise, you should handle
+  /// requesting permission yourself in your app by calling
+  /// [PushNotificationRepository.requestPermission].
+  static Future<void> initialize({bool shouldRequestPermission = true}) async {
     // Push Notifications
-    await Firebase.initializeApp(
-        // TODO(me): Execute `flutterfire configure` command to create a firebase config file
-        // options: DefaultFirebaseOptions.currentPlatform,
-        );
-    await requestPermission();
+
+    // Initialize Firebase if it hasn't been initialized yet. Otherwise, the
+    // app will crash.
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+          // TODO(me): Execute `flutterfire configure` command to create a firebase config file
+          // options: DefaultFirebaseOptions.currentPlatform,
+          );
+    }
+
+    if (shouldRequestPermission) {
+      await requestPermission();
+    }
 
     final token = await FirebaseMessaging.instance.getToken();
 
@@ -55,7 +69,7 @@ class PushNotificationRepository {
     // Local Notifications
   }
 
-  /// For Apple & Web only.
+  /// *Apple & web only.*
   ///
   /// Requests device permission to receive push notifications.
   static Future<void> requestPermission() async {
@@ -69,12 +83,6 @@ class PushNotificationRepository {
             // badge: true,
             // sound: true,
             );
-
-    // log('User granted permission: ${settings.authorizationStatus}');
-  }
-
-  static void close() {
-    _messageStream.close();
   }
 
   static Future<void> _backgroundHandler(RemoteMessage message) async {

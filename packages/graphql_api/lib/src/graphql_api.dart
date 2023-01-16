@@ -9,9 +9,9 @@ import 'package:graphql/client.dart';
 /// This class also handles authentication by adding the `Authorization` header,
 /// if needed.
 /// {@endtemplate}
-class GraphqlApi {
+class GraphQlApi {
   /// {@macro graphql_api}
-  GraphqlApi({
+  GraphQlApi({
     required String apiUrl,
     String? token,
   }) {

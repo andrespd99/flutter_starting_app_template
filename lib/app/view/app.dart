@@ -1,6 +1,5 @@
 import 'package:auth_api/auth_api.dart';
 import 'package:flutter/material.dart';
-import 'package:graphql_base_example/counter/counter.dart';
 import 'package:graphql_base_example/l10n/l10n.dart';
 import 'package:graphql_base_example/repositories/auth_repository.dart';
 import 'package:graphql_base_example/repositories/push_notifications_repository.dart';
@@ -42,7 +41,7 @@ class App extends StatelessWidget {
             context.read<UserRepository>(),
             notificationsRepository,
           ),
-          child: const CounterPage(),
+          child: Container(),
         ),
       ),
     );

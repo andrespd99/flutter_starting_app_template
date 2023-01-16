@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:graphql_api/graphql_api.dart';
+import 'package:my_utils/my_utils.dart' as utils;
 
 /// {@template auth_exception}
 /// Exception related to authentication errors.
@@ -23,15 +24,15 @@ class AuthException implements Exception {
 class AuthApi {
   /// {@macro auth_api_with_secure_storage}
   const AuthApi({
-    required GraphqlApi graphQLClient,
+    required GraphQlApi graphQlClient,
     required FlutterSecureStorage plugin,
-  })  : _client = graphQLClient,
+  })  : _client = graphQlClient,
         _plugin = plugin;
 
   static const _source = 'AuthApi';
   static const _key = '__APP_TOKEN__';
 
-  final GraphqlApi _client;
+  final GraphQlApi _client;
   final FlutterSecureStorage _plugin;
 
   /// Retrieves the stored token, if any. Returns `null` if no token is found.
@@ -158,11 +159,12 @@ class AuthApi {
       _client.setToken(null);
 
       log('✅ Sign out successful.', name: '$_source.signOut()');
-    } catch (e) {
-      log(
+    } catch (e, s) {
+      await utils.log(
         '❌ Sign out failed.',
         name: '$_source.signOut()',
         error: e,
+        stackTrace: s,
       );
       rethrow;
     }

@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:auth_api/auth_api.dart';
 import 'package:graphql_api/graphql_api.dart';
+import 'package:my_utils/my_utils.dart' as utils;
 
 /// {@template user_api}
 /// API for user data interaction. This class exposes methods to fetch and
@@ -13,12 +15,12 @@ import 'package:graphql_api/graphql_api.dart';
 class UserApi {
   /// {@macro user_api}
   const UserApi({
-    required GraphqlApi client,
+    required GraphQlApi client,
   }) : _client = client;
 
   static const _source = 'UserApi';
 
-  final GraphqlApi _client;
+  final GraphQlApi _client;
 
   /// Fetches a user with the token from the API. If `null` is returned, the
   /// user is not authenticated or the token is invalid.
@@ -37,13 +39,15 @@ class UserApi {
       log('✅ User fetched.', name: '$_source.fetchUser()');
 
       return response;
-    } catch (e) {
+    } catch (e, stackTrace) {
       // TODO(me): Handle error.
-      log(
+      await utils.log(
         '❌ Error fetching user.',
         name: '$_source.fetchUser()',
         error: e,
+        stackTrace: stackTrace,
       );
+
       rethrow;
     }
   }
@@ -88,12 +92,13 @@ class UserApi {
       log('✅ User updated.', name: '$_source.updateUser()');
 
       return response;
-    } catch (e) {
+    } catch (e, stackTrace) {
       // TODO(me): Handle error.
-      log(
+      await utils.log(
         '❌ Error updating user.',
         name: '$_source.updateUser()',
         error: e,
+        stackTrace: stackTrace,
       );
       rethrow;
     }

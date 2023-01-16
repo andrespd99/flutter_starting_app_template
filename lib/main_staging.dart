@@ -1,7 +1,6 @@
-import 'dart:developer';
-
 import 'package:auth_api/auth_api.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:graphql_api/graphql_api.dart';
 import 'package:graphql_base_example/app/app.dart';
@@ -12,21 +11,24 @@ void main() {
   bootstrap(() async {
     WidgetsFlutterBinding.ensureInitialized();
 
-    try {
-      await PushNotificationRepository.initializeApp();
-    } catch (e) {
-      log('❌ Error initializing push notifications', error: e);
-    }
+    await dotenv.load();
+    final client = GraphQlApi(apiUrl: dotenv.env['STG_API_URL']!);
+    // TODO: Load other variables from .env file if needed.
 
-    final _client = GraphqlApi(apiUrl: '');
+    // NOTE: Uncomment if you want to use push notifications on staging env.
+    // try {
+    //   await PushNotificationRepository.initialize();
+    // } catch (e) {
+    //   log('❌ Error initializing push notifications', error: e);
+    // }
 
     return App(
       notificationsRepository: PushNotificationRepository(),
       authApi: AuthApi(
-        graphQLClient: _client,
+        graphQlClient: client,
         plugin: const FlutterSecureStorage(),
       ),
-      userApi: UserApi(client: _client),
+      userApi: UserApi(client: client),
       // TODO: Other repositories and variables...
     );
   });

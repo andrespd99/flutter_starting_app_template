@@ -1,5 +1,5 @@
-name: graphql_base_example
-description: A Very Good Project created by Very Good CLI.
+name: flutter_starting_app
+description: This is a good starting point for any new project. Comes already with must-have packages and services for a mobile app.
 version: 1.0.0+1
 publish_to: none
 
@@ -17,6 +17,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.1
+  flutter_dotenv: ^5.0.2
   flutter_local_notifications: ^13.0.0
   flutter_localizations:
     sdk: flutter
