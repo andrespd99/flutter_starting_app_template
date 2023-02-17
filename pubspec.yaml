@@ -13,7 +13,7 @@ dependencies:
   bloc: ^8.1.0
   equatable: ^2.0.5
   firebase_core: ^2.4.1
-  firebase_messaging: ^14.2.1
+  firebase_messaging: ^14.2.4
   flutter:
     sdk: flutter
   flutter_bloc: ^8.1.1
